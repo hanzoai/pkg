@@ -1,0 +1,59 @@
+# Hanzo Pkg — pkg.hanzo.ai, the self-hosted npm registry.
+#
+# verdaccio 5 with verdaccio-aws-s3-storage: every package tarball and
+# metadata document lives in the `pkg` bucket on hanzoai/s3 (s3.hanzo.svc),
+# the same store registry.hanzo.ai (containers) uses. Zero local disk.
+#
+# Credentials arrive as environment, never in this file:
+#   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY  <- k8s secret s3-credentials
+#                                                 (KMS-synced, /hanzo-s3)
+#   /verdaccio/auth/htpasswd                   <- k8s secret pkg-auth
+#                                                 (KMS-synced, /pkg htpasswd)
+
+plugins: /verdaccio/plugins/node_modules
+
+store:
+  aws-s3-storage:
+    bucket: pkg
+    region: us-east-1
+    endpoint: http://s3.hanzo.svc:9000
+    s3ForcePathStyle: true
+
+auth:
+  htpasswd:
+    file: /verdaccio/auth/htpasswd
+    algorithm: bcrypt
+    # Registration closed: users are provisioned through KMS, not adduser.
+    max_users: -1
+
+web:
+  title: Hanzo Pkg
+
+uplinks:
+  npmjs:
+    url: https://registry.npmjs.org/
+    cache: true
+    maxage: 30m
+    max_fails: 5
+    fail_timeout: 2m
+
+packages:
+  '@*/*':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+  '**':
+    access: $all
+    publish: $authenticated
+    proxy: npmjs
+
+server:
+  keepAliveTimeout: 60
+
+max_body_size: 200mb
+
+middlewares:
+  audit:
+    enabled: true
+
+log: { type: stdout, format: pretty, level: info }
