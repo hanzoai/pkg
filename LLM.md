@@ -29,8 +29,13 @@ Fleet app `hanzo-pkg`: `universe/charts/app/values/hanzo/pkg.yaml`.
   surface), `/` is the npm protocol -> service `pkg:4873`.
 
 ## Publish
+`max_users: -1` also closes the interactive `npm login` endpoint (verdaccio
+routes login through adduser), so auth is Basic `_auth` in `.npmrc`:
 ```
-npm login --registry https://pkg.hanzo.ai/   # user hanzo, password from KMS /pkg/publish-password
-npm publish --registry https://pkg.hanzo.ai/
+registry=https://pkg.hanzo.ai/
+//pkg.hanzo.ai/:_auth=<base64 of "hanzo:<KMS hanzo/prod /pkg/publish-password>">
 ```
+Verified end to end: `npm ping` PONG, `npm whoami` -> hanzo,
+`@hanzo/smoke@0.0.1` published + installed back, `@hanzo/ui@8.0.33` installed
+THROUGH the uplink with its tarball cached into the S3 bucket.
 Repo `.npmrc` cutover is a separate decision — nothing points here yet.
