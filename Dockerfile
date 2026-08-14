@@ -7,12 +7,10 @@ RUN npm install --prefix /verdaccio/plugins verdaccio-aws-s3-storage@10.3.3 \
 
 COPY conf/config.yaml /verdaccio/conf/config.yaml
 
-# The UI reads its assets from the theme's static dir, which is what /-/static/
-# serves. web.logo takes a basename and resolves to that URL, so the mark has to
-# be a file here. The tab icon has no config at all — the rendered <link rel=icon>
-# names static/favicon.ico literally — so favicon.ico is replaced, not pointed at.
-COPY web/hanzo-mark.svg web/favicon.ico \
-  /usr/local/lib/node_modules/verdaccio/node_modules/@verdaccio/ui-theme/static/
+# config.yaml names both marks by absolute path, so they need a home that is
+# stable across a verdaccio bump. Not the theme's static dir: nothing reads the
+# mark from there, and the tab icon is answered before that dir is consulted.
+COPY web/ /verdaccio/web/
 
 USER $VERDACCIO_USER_UID
 
