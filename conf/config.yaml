@@ -34,6 +34,9 @@ web:
   logo: hanzo-mark.svg
   logoDark: hanzo-mark.svg
   primary_color: '#000000'
+  # The stock footer signs the page "Powered by <upstream>" with its mark. This
+  # registry is ours; the footer carries no other content, so it goes.
+  showFooter: false
 
 uplinks:
   npmjs:
