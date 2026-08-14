@@ -28,11 +28,17 @@ auth:
 
 web:
   title: Hanzo Pkg
-  # Basenames, not paths: verdaccio rewrites each to /-/static/<basename>, served
-  # from the theme dir the Dockerfile copies these into. The mark is the white
-  # one because primary_color paints the header behind it.
-  logo: hanzo-mark.svg
-  logoDark: hanzo-mark.svg
+  # ABSOLUTE paths. verdaccio resolves a relative logo against the process CWD
+  # (/opt/verdaccio), finds nothing there, and drops the value to undefined — the
+  # page then renders logo:"" with no mark and no error. Given a path that exists
+  # it reads the file itself and publishes it at /-/static/<basename>.
+  # The mark is the white one because primary_color paints the header behind it.
+  logo: /verdaccio/web/hanzo-mark.svg
+  logoDark: /verdaccio/web/hanzo-mark.svg
+  # The tab icon is NOT the theme's static/favicon.ico. An app-level route for
+  # /-/static/favicon.ico answers first and streams whatever this names, falling
+  # back to the stock icon shipped inside verdaccio itself.
+  favicon: /verdaccio/web/favicon.ico
   primary_color: '#000000'
   # The stock footer signs the page "Powered by <upstream>" with its mark. This
   # registry is ours; the footer carries no other content, so it goes.
