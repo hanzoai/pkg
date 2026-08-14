@@ -28,6 +28,12 @@ auth:
 
 web:
   title: Hanzo Pkg
+  # Basenames, not paths: verdaccio rewrites each to /-/static/<basename>, served
+  # from the theme dir the Dockerfile copies these into. The mark is the white
+  # one because primary_color paints the header behind it.
+  logo: hanzo-mark.svg
+  logoDark: hanzo-mark.svg
+  primary_color: '#000000'
 
 uplinks:
   npmjs:
