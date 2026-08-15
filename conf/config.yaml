@@ -51,6 +51,18 @@ uplinks:
     maxage: 30m
     max_fails: 5
     fail_timeout: 2m
+    # A REQUEST THAT NEVER ENDS IS WORSE THAN ONE THAT FAILS. Without this,
+    # verdaccio inherits no socket deadline: a half-open connection to npmjs
+    # leaves the client hanging forever rather than erroring, and `max_fails`
+    # never counts a fail because nothing ever failed. Measured that way —
+    # `/pnpm`, `/yarn`, `/lodash` and `/typescript` hung past 30s while
+    # `/react` and `/eslint`, already in S3, answered instantly, and the log
+    # showed the upstream request was never even issued for the stuck ones.
+    #
+    # It matters far beyond a slow install: every runner in the fleet sets
+    # COREPACK_NPM_REGISTRY to this host, so corepack cannot bootstrap pnpm
+    # while a metadata read hangs, and CI stops estate-wide on a 524.
+    timeout: 30s
 
 packages:
   '@*/*':
