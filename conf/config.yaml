@@ -2,7 +2,7 @@
 #
 # verdaccio 5 with verdaccio-aws-s3-storage: every package tarball and
 # metadata document lives in the `pkg` bucket on hanzoai/s3 (s3.hanzo.svc),
-# the same store registry.hanzo.ai (containers) uses. Zero local disk.
+# the same store oci.hanzo.ai (containers) uses. Zero local disk.
 #
 # Credentials arrive as environment, never in this file:
 #   AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY  <- k8s secret s3-credentials

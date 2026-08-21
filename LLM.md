@@ -1,7 +1,7 @@
 # hanzoai/pkg — pkg.hanzo.ai, the self-hosted npm registry
 
 verdaccio 5.33.0 + verdaccio-aws-s3-storage 10.3.3, the npm twin of
-`hanzoai/registry` (registry.hanzo.ai, containers). Same estate pattern:
+`hanzoai/registry` (oci.hanzo.ai, containers). Same estate pattern:
 stock battle-tested server, config baked into the image, storage on
 hanzoai/s3, secrets from KMS.
 
