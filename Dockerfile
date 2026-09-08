@@ -7,6 +7,11 @@ RUN npm install --prefix /verdaccio/plugins verdaccio-aws-s3-storage@10.3.3 \
 
 COPY conf/config.yaml /verdaccio/conf/config.yaml
 
+# config.yaml names both marks by absolute path, so they need a home that is
+# stable across a verdaccio bump. Not the theme's static dir: nothing reads the
+# mark from there, and the tab icon is answered before that dir is consulted.
+COPY web/ /verdaccio/web/
+
 USER $VERDACCIO_USER_UID
 
 EXPOSE 4873

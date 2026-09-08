@@ -28,6 +28,21 @@ auth:
 
 web:
   title: Hanzo Pkg
+  # ABSOLUTE paths. verdaccio resolves a relative logo against the process CWD
+  # (/opt/verdaccio), finds nothing there, and drops the value to undefined — the
+  # page then renders logo:"" with no mark and no error. Given a path that exists
+  # it reads the file itself and publishes it at /-/static/<basename>.
+  # The mark is the white one because primary_color paints the header behind it.
+  logo: /verdaccio/web/hanzo-mark.svg
+  logoDark: /verdaccio/web/hanzo-mark.svg
+  # The tab icon is NOT the theme's static/favicon.ico. An app-level route for
+  # /-/static/favicon.ico answers first and streams whatever this names, falling
+  # back to the stock icon shipped inside verdaccio itself.
+  favicon: /verdaccio/web/favicon.ico
+  primary_color: '#000000'
+  # The stock footer signs the page "Powered by <upstream>" with its mark. This
+  # registry is ours; the footer carries no other content, so it goes.
+  showFooter: false
 
 uplinks:
   npmjs:
@@ -36,6 +51,18 @@ uplinks:
     maxage: 30m
     max_fails: 5
     fail_timeout: 2m
+    # A REQUEST THAT NEVER ENDS IS WORSE THAN ONE THAT FAILS. Without this,
+    # verdaccio inherits no socket deadline: a half-open connection to npmjs
+    # leaves the client hanging forever rather than erroring, and `max_fails`
+    # never counts a fail because nothing ever failed. Measured that way —
+    # `/pnpm`, `/yarn`, `/lodash` and `/typescript` hung past 30s while
+    # `/react` and `/eslint`, already in S3, answered instantly, and the log
+    # showed the upstream request was never even issued for the stuck ones.
+    #
+    # It matters far beyond a slow install: every runner in the fleet sets
+    # COREPACK_NPM_REGISTRY to this host, so corepack cannot bootstrap pnpm
+    # while a metadata read hangs, and CI stops estate-wide on a 524.
+    timeout: 30s
 
 packages:
   '@*/*':
