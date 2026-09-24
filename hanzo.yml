@@ -1,0 +1,9 @@
+# Hanzo CI/CD for hanzoai/pkg: .github/workflows/cicd.yml imports hanzoai/ci,
+# which reads this file. The build door builds each image, one BuildKit Job
+# per platform.
+images:
+  - name: pkg
+    context: .
+    dockerfile: Dockerfile
+    repo: ghcr.io/hanzoai/pkg
+    platforms: [linux/amd64]
